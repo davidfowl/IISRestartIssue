@@ -13,7 +13,12 @@ namespace RestartRepro
     {
         public void Configuration(IAppBuilder app)
         {
-            var token = GetShutdownToken(app.Properties);
+            // This token represents the lifetime of the application. It 
+            // should fire if there's an App pool recycle or app domain restart.
+
+            // It doesn't seem to fire if there's a long running request and
+            // the website is stopped in the IIS manager.
+            CancellationToken token = GetShutdownToken(app.Properties);
 
             token.Register(OnShutdown);
 
